@@ -25,7 +25,7 @@ module.exports.getUserById = (req, res, next) => {
       if (err instanceof UserIsNotFound) {
         next(err);
       } else {
-        next(new ServerError(err));
+        next(new InvalidRequest(err));
       }
     });
 };
