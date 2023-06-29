@@ -1,4 +1,4 @@
-export default class InvalidRequest extends Error {
+class InvalidRequest extends Error {
   constructor(err) {
     super(err);
     this.name = "InvalidRequest";
@@ -6,3 +6,5 @@ export default class InvalidRequest extends Error {
     this.statusCode = 400;
   }
 }
+
+module.exports.InvalidRequest = InvalidRequest;

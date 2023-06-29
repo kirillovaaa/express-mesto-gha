@@ -1,4 +1,4 @@
-export default class ServerError extends Error {
+class ServerError extends Error {
   constructor(err) {
     super(err);
     this.name = "ServerError";
@@ -6,3 +6,5 @@ export default class ServerError extends Error {
     this.statusCode = 500;
   }
 }
+
+module.exports.ServerError = ServerError;

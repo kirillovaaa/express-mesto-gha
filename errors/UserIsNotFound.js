@@ -1,4 +1,4 @@
-export default class UserIsNotFound extends Error {
+class UserIsNotFound extends Error {
   constructor(err) {
     super(err);
     this.name = "UserIsNotFound";
@@ -6,3 +6,5 @@ export default class UserIsNotFound extends Error {
     this.statusCode = 404;
   }
 }
+
+module.exports.UserIsNotFound = UserIsNotFound;
