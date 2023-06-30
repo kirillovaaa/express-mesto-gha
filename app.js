@@ -2,11 +2,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 
-const app = express();
-const port = 3000;
+const { errorMiddleware } = require("./middlewares/error");
 
 const usersRouter = require("./routes/users");
 const cardsRouter = require("./routes/cards");
+
+const app = express();
+const port = 3000;
 
 mongoose.connect("mongodb://localhost:27017/mestodb");
 
@@ -23,6 +25,8 @@ app.use((req, res, next) => {
 
 app.use(usersRouter);
 app.use(cardsRouter);
+
+app.use(errorMiddleware);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
