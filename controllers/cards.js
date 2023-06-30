@@ -32,7 +32,7 @@ module.exports.deleteCard = (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.cardId)) {
     next(new InvalidRequestError());
   } else {
-    Card.findOneAndDelete(req.params.cardId, { runValidators: true })
+    Card.findOneAndDelete(req.params.cardId)
       .then((card) => {
         if (card === null) {
           throw new NotFoundError("Карточка с указанным _id не найдена");
