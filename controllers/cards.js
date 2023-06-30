@@ -29,20 +29,24 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.findOneAndDelete(req.user._id)
-    .then((card) => {
-      if (card === null) {
-        throw new NotFoundError("Карточка с указанным _id не найдена");
-      }
-      res.send({ data: card });
-    })
-    .catch((err) => {
-      if (err instanceof NotFoundError) {
-        next(err);
-      } else {
-        next(new InvalidRequestError());
-      }
-    });
+  if (!mongoose.Types.ObjectId.isValid(req.params.cardId)) {
+    next(new InvalidRequestError());
+  } else {
+    Card.findOneAndDelete(req.params.cardId, { runValidators: true })
+      .then((card) => {
+        if (card === null) {
+          throw new NotFoundError("Карточка с указанным _id не найдена");
+        }
+        res.send({ data: card });
+      })
+      .catch((err) => {
+        if (err instanceof NotFoundError) {
+          next(err);
+        } else {
+          next(new ServerError());
+        }
+      });
+  }
 };
 
 module.exports.likeCard = (req, res, next) => {
