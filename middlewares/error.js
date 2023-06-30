@@ -1,3 +1,4 @@
 module.exports.errorMiddleware = (err, req, res, next) => {
-  res.status(err.statusCode).send({ message: err.message });
+  res.headers["Content-Type"] = "text/html";
+  res.status(err.statusCode).send(err.message);
 };
