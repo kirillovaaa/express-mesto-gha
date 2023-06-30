@@ -49,7 +49,11 @@ module.exports.createUser = (req, res, next) => {
 module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, about },
+    { new: true, runValidators: true }
+  )
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
@@ -64,7 +68,7 @@ module.exports.updateAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar: req.body.avatar },
-    { new: true }
+    { new: true, runValidators: true }
   )
     .then((user) => res.send({ data: user }))
     .catch((err) => {
