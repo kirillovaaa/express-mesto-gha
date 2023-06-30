@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 
-const { InvalidRequest } = require("../errors/InvalidRequest");
+const { InvalidRequestError } = require("../errors/InvalidRequestError");
 const { ServerError } = require("../errors/ServerError");
+const { NotFoundError } = require("../errors/NotFoundError");
 
 const Card = require("../models/card");
 
@@ -9,7 +10,7 @@ module.exports.getAllCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
     .catch((err) => {
-      next(new ServerError(err));
+      next(new ServerError());
     });
 };
 
@@ -20,9 +21,9 @@ module.exports.createCard = (req, res, next) => {
     .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        next(new InvalidRequest(err));
+        next(new InvalidRequestError());
       } else {
-        next(new ServerError(err));
+        next(new ServerError());
       }
     });
 };
@@ -31,7 +32,7 @@ module.exports.deleteCard = (req, res, next) => {
   Card.findByIdAndDelete(req.user._id)
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      next(new InvalidRequest(err));
+      next(new InvalidRequestError());
     });
 };
 
@@ -41,9 +42,17 @@ module.exports.likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true }
   )
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (card === null) {
+        throw new NotFoundError("Карточка с указанным _id не найдена");
+      }
+      res.send({ data: card });
+    })
     .catch((err) => {
-      next(new InvalidRequest(err));
+      if (err instanceof NotFoundError) {
+        next(err);
+      }
+      next(new InvalidRequestError());
     });
 };
 
@@ -53,8 +62,16 @@ module.exports.dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true }
   )
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (card === null) {
+        throw new NotFoundError("Карточка с указанным _id не найдена");
+      }
+      res.send({ data: card });
+    })
     .catch((err) => {
-      next(new InvalidRequest(err));
+      if (err instanceof NotFoundError) {
+        next(err);
+      }
+      next(new InvalidRequestError());
     });
 };

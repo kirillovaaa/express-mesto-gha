@@ -2,15 +2,15 @@ const mongoose = require("mongoose");
 
 const User = require("../models/user");
 
-const { InvalidRequest } = require("../errors/InvalidRequest");
+const { InvalidRequestError } = require("../errors/InvalidRequestError");
 const { ServerError } = require("../errors/ServerError");
-const { UserIsNotFound } = require("../errors/UserIsNotFound");
+const { NotFoundError } = require("../errors/NotFoundError");
 
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch((err) => {
-      next(new InvalidRequest(err));
+      next(new InvalidRequestError());
     });
 };
 
@@ -19,15 +19,16 @@ module.exports.getUserById = (req, res, next) => {
   User.findById(userId)
     .then((user) => {
       if (user === null) {
-        throw new UserIsNotFound();
+        throw new NotFoundError("Пользователь с указанным _id не найден");
       }
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err instanceof UserIsNotFound) {
+      console.log(err);
+      if (err instanceof NotFoundError) {
         next(err);
       } else {
-        next(new InvalidRequest(err));
+        next(new InvalidRequestError());
       }
     });
 };
@@ -39,9 +40,9 @@ module.exports.createUser = (req, res, next) => {
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        next(new InvalidRequest(err));
+        next(new InvalidRequestError());
       } else {
-        next(new ServerError(err));
+        next(new ServerError());
       }
     });
 };
@@ -57,9 +58,9 @@ module.exports.updateUser = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        next(new InvalidRequest(err));
+        next(new InvalidRequestError());
       } else {
-        next(new ServerError(err));
+        next(new ServerError());
       }
     });
 };
@@ -73,9 +74,9 @@ module.exports.updateAvatar = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        next(new InvalidRequest(err));
+        next(new InvalidRequestError());
       } else {
-        next(new ServerError(err));
+        next(new ServerError());
       }
     });
 };
