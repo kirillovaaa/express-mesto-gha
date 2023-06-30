@@ -32,15 +32,16 @@ module.exports.deleteCard = (req, res, next) => {
   Card.findOneAndDelete(req.user._id)
     .then((card) => {
       if (card === null) {
-        throw new InvalidRequestError();
+        throw new NotFoundError("Карточка с указанным _id не найдена");
       }
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err instanceof InvalidRequestError) {
+      if (err instanceof NotFoundError) {
         next(err);
+      } else {
+        next(new InvalidRequestError());
       }
-      next(new InvalidRequestError());
     });
 };
 
@@ -59,8 +60,9 @@ module.exports.likeCard = (req, res, next) => {
     .catch((err) => {
       if (err instanceof NotFoundError) {
         next(err);
+      } else {
+        next(new InvalidRequestError());
       }
-      next(new InvalidRequestError());
     });
 };
 
@@ -79,7 +81,8 @@ module.exports.dislikeCard = (req, res, next) => {
     .catch((err) => {
       if (err instanceof NotFoundError) {
         next(err);
+      } else {
+        next(new InvalidRequestError());
       }
-      next(new InvalidRequestError());
     });
 };
