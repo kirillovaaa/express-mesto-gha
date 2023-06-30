@@ -29,9 +29,17 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.findByIdAndDelete(req.user._id)
-    .then((card) => res.send({ data: card }))
+  Card.findOneAndDelete(req.user._id)
+    .then((card) => {
+      if (card === null) {
+        throw new InvalidRequestError();
+      }
+      res.send({ data: card });
+    })
     .catch((err) => {
+      if (err instanceof InvalidRequestError) {
+        next(err);
+      }
       next(new InvalidRequestError());
     });
 };
