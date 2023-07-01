@@ -1,7 +1,7 @@
 class InvalidRequestError extends Error {
-  constructor(message = "Переданы некорректные данные") {
+  constructor(message = 'Переданы некорректные данные') {
     super(message);
-    this.name = "InvalidRequestError";
+    this.name = 'InvalidRequestError';
     this.statusCode = 400;
   }
 }

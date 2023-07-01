@@ -3,6 +3,9 @@ logs
 *.log
 npm-debug.log*
 
+# VSCode
+.vscode
+
 # Dependency directory
 node_modules
 

@@ -1,15 +1,15 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const User = require("../models/user");
+const User = require('../models/user');
 
-const { InvalidRequestError } = require("../errors/InvalidRequestError");
-const { ServerError } = require("../errors/ServerError");
-const { NotFoundError } = require("../errors/NotFoundError");
+const { InvalidRequestError } = require('../errors/InvalidRequestError');
+const { ServerError } = require('../errors/ServerError');
+const { NotFoundError } = require('../errors/NotFoundError');
 
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((err) => {
+    .catch(() => {
       next(new InvalidRequestError());
     });
 };
@@ -19,7 +19,7 @@ module.exports.getUserById = (req, res, next) => {
   User.findById(userId)
     .then((user) => {
       if (user === null) {
-        throw new NotFoundError("Пользователь с указанным _id не найден");
+        throw new NotFoundError('Пользователь с указанным _id не найден');
       }
       res.send({ data: user });
     })
@@ -52,7 +52,7 @@ module.exports.updateUser = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((user) => res.send({ data: user }))
     .catch((err) => {
@@ -68,7 +68,7 @@ module.exports.updateAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar: req.body.avatar },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((user) => res.send({ data: user }))
     .catch((err) => {
