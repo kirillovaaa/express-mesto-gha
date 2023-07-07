@@ -16,6 +16,7 @@ module.exports.getAllUsers = (req, res, next) => {
 
 module.exports.getUserById = (req, res, next) => {
   const { userId } = req.params;
+
   User.findById(userId)
     .then((user) => {
       if (user === null) {
@@ -32,18 +33,13 @@ module.exports.getUserById = (req, res, next) => {
     });
 };
 
-module.exports.createUser = (req, res, next) => {
-  const { name, about, avatar } = req.body;
+// роут для получения информации о пользователе
+module.exports.getMe = (req, res, next) => {
+  const { _id } = req.user;
 
-  User.create({ name, about, avatar })
+  User.findById(_id)
     .then((user) => res.status(201).send({ data: user }))
-    .catch((err) => {
-      if (err instanceof mongoose.Error.ValidationError) {
-        next(new InvalidRequestError());
-      } else {
-        next(new ServerError());
-      }
-    });
+    .catch((err) => next(new ServerError(err)));
 };
 
 module.exports.updateUser = (req, res, next) => {

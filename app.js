@@ -1,8 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { errors } = require('celebrate');
 
 const { errorMiddleware } = require('./middlewares/error');
+const { authMiddleware } = require('./middlewares/auth');
+
+const { login, createUser } = require('./controllers/auth');
 
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
@@ -19,15 +23,14 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// хардкодим пользовательский токен
-app.use((req, res, next) => {
-  req.user = {
-    _id: '649d2403aebd5b11db813f0e',
-  };
-  next();
-});
+// незащищенные роуты
+app.post('/signin', login);
+app.post('/signup', createUser);
 
-// роутеры
+// защита авторизацией
+app.use(authMiddleware);
+
+// защищенные роуты
 app.use(usersRouter);
 app.use(cardsRouter);
 
@@ -37,6 +40,7 @@ app.use((req, res, next) => {
 });
 
 // отлов ошибки
+app.use(errors);
 app.use(errorMiddleware);
 
 app.listen(port, () => {
