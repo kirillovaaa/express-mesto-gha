@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+const { ForbiddenError } = require('../errors/ForbiddenError');
 const { InvalidRequestError } = require('../errors/InvalidRequestError');
 const { ServerError } = require('../errors/ServerError');
 const { NotFoundError } = require('../errors/NotFoundError');
@@ -29,18 +30,22 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
+  const { _id } = req.user;
+
   if (!mongoose.Types.ObjectId.isValid(req.params.cardId)) {
     next(new InvalidRequestError());
   } else {
     Card.findOneAndDelete(req.params.cardId)
       .then((card) => {
         if (card === null) {
-          throw new NotFoundError('Карточка с указанным _id не найдена');
+          return Promise.reject(new NotFoundError('Карточка с указанным _id не найдена'));
+        } if (card.owner !== _id) {
+          return Promise.reject(new ForbiddenError());
         }
-        res.send({ data: card });
+        return res.send({ data: card });
       })
       .catch((err) => {
-        if (err instanceof NotFoundError) {
+        if (err instanceof NotFoundError || err instanceof ForbiddenError) {
           next(err);
         } else {
           next(new ServerError());
