@@ -10,7 +10,6 @@ module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch(() => {
-      // next(new InvalidRequestError());
       next(new ServerError());
     });
 };
@@ -29,7 +28,6 @@ module.exports.getUserById = (req, res, next) => {
       if (err instanceof NotFoundError) {
         next(err);
       } else {
-        // next(new InvalidRequestError());
         next(new ServerError());
       }
     });
