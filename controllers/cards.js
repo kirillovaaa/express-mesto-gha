@@ -72,7 +72,8 @@ module.exports.likeCard = (req, res, next) => {
       if (err instanceof NotFoundError) {
         next(err);
       } else {
-        next(new InvalidRequestError());
+        // next(new InvalidRequestError());
+        next(new ServerError());
       }
     });
 };
@@ -93,7 +94,8 @@ module.exports.dislikeCard = (req, res, next) => {
       if (err instanceof NotFoundError) {
         next(err);
       } else {
-        next(new InvalidRequestError());
+        // next(new InvalidRequestError());
+        next(new ServerError());
       }
     });
 };
