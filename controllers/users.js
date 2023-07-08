@@ -38,7 +38,7 @@ module.exports.getMe = (req, res, next) => {
   const { _id } = req.user;
 
   User.findById(_id)
-    .then((user) => res.status.send({ data: user }))
+    .then((user) => res.send({ data: user }))
     .catch((err) => next(new ServerError(err)));
 };
 
