@@ -33,17 +33,18 @@ module.exports.deleteCard = (req, res, next) => {
   const { _id } = req.user;
 
   if (!mongoose.Types.ObjectId.isValid(req.params.cardId)) {
-    next(new InvalidRequestError());
+    next(new InvalidRequestError('Неверный тип _id карточки'));
   } else {
-    Card.findOneAndDelete(req.params.cardId)
+    Card.findById(req.params.cardId)
       .then((card) => {
         if (card === null) {
           return Promise.reject(new NotFoundError('Карточка с указанным _id не найдена'));
         } if (card.owner !== _id) {
           return Promise.reject(new ForbiddenError());
         }
-        return res.send({ data: card });
+        return Card.findByIdAndDelete(req.params.cardId);
       })
+      .then((card) => res.send(card))
       .catch((err) => {
         if (err instanceof NotFoundError || err instanceof ForbiddenError) {
           next(err);
