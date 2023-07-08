@@ -15,3 +15,5 @@ const authCelebrator = celebrate({
 
 router.post('/signin', authCelebrator, login);
 router.post('/signup', authCelebrator, createUser);
+
+module.exports = router;
