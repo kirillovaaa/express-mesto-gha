@@ -6,8 +6,7 @@ const { errors } = require('celebrate');
 const { errorMiddleware } = require('./middlewares/error');
 const { authMiddleware } = require('./middlewares/auth');
 
-const { login, createUser } = require('./controllers/auth');
-
+const authRouter = require('./routes/auth');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 
@@ -24,8 +23,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // незащищенные роуты
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.use(authRouter);
 
 // защита авторизацией
 app.use(authMiddleware);
