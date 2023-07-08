@@ -39,7 +39,8 @@ module.exports.deleteCard = (req, res, next) => {
       .then((card) => {
         if (card === null) {
           return Promise.reject(new NotFoundError('Карточка с указанным _id не найдена'));
-        } if (card.owner !== _id) {
+        }
+        if (card.owner.toString() !== _id) {
           return Promise.reject(new ForbiddenError());
         }
         return Card.findByIdAndDelete(req.params.cardId);
