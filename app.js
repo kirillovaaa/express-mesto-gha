@@ -38,7 +38,7 @@ app.use((req, res, next) => {
 });
 
 // отлов ошибки
-app.use(errors);
+app.use(errors({ statusCode: 400 }));
 app.use(errorMiddleware);
 
 app.listen(port, () => {
