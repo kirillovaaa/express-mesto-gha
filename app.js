@@ -6,6 +6,8 @@ const { errors } = require('celebrate');
 const { errorMiddleware } = require('./middlewares/error');
 const { authMiddleware } = require('./middlewares/auth');
 
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+
 const authRouter = require('./routes/auth');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
@@ -22,6 +24,9 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// обработчик логгера
+app.use(requestLogger);
+
 // незащищенные роуты
 app.use(authRouter);
 
@@ -36,6 +41,9 @@ app.use(cardsRouter);
 app.use((req, res, next) => {
   next(new NotFoundError());
 });
+
+// обработчик логгера - ошибки
+app.use(errorLogger);
 
 // отлов ошибки
 app.use(errors({ statusCode: 400 }));
